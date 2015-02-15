@@ -2,6 +2,7 @@ import Enums.MS;
 import Enums.TradeType;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeMap;
 
@@ -12,33 +13,35 @@ import java.util.TreeMap;
  * (по завершению кол-во товара переходит в 0 или продляеться на средний срок)
  */
 public class Deal implements DealType {
-    TreeMap<Float,Trade> map;
+    ArrayList<Trade> map;
     Time time; //data
     String ticker;
-    TradeType tradeType;
-    Time open;
-    Time close;
-    MS direction;
-    long volume;
-    double averageOpenPrice;
-    double averageClosePrice;
-    double ecnTax100;
-    double ecnTax;
-    double moneyVolumeOpen;
-    double moneyVolumeClose;
-    double PlGross;
-    double PlNet;
+    TradeType tradeType; //B S SS
+    Time openTime; //время открытия
+    Time closeTime; //время закрытия
+    MS direction; //направление сделки
+
+    long volume; // кол акций
+    double averageOpenPrice; //сред. цена открытия
+    double averageClosePrice; // сред. цена закрытия
+    double ecnTax100; //комисия на 100 акций
+    double ecnTax; //общий налог брокера
+    double moneyVolumeOpen; //сумма открытия
+    double moneyVolumeClose; //сумма закрытия
+    double PlGross; //прибыль без налога
+    double PlNet; //чистая прибыль (с налогом)
     double volOnStartGross;
     double volOnStartNet;
     double volOnCloseGross;
     double volOnCloseNet;
 
-    public TreeMap<Float, Trade> getMap() {
-        return map;
+    public Trade[] getTrades(){
+        Trade[] tr = new Trade[map.size()];
+        return map.toArray(tr);
     }
 
-    public Collection<Trade> getTrades(){
-        return map.values();
+    public ArrayList<Trade> getMap() {
+        return map;
     }
 
     @Override
@@ -56,12 +59,12 @@ public class Deal implements DealType {
         return tradeType;
     }
 
-    public Time getOpen() {
-        return open;
+    public Time getOpenTime() {
+        return openTime;
     }
 
-    public Time getClose() {
-        return close;
+    public Time getCloseTime() {
+        return closeTime;
     }
 
     @Override

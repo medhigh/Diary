@@ -13,7 +13,7 @@ public interface DealType {
      * (может и не понадобиться) samlol
      * @return
      */
-    public Collection<Trade> getTrades();
+    public Trade[] getTrades();
     /*
     возвращает объект класса Time но правильную информацию содержит только сама дата!
     время не содержит корректного значения
@@ -52,12 +52,12 @@ public interface DealType {
     возвращает среднюю цену общего кол. акций купленых или проданых по первоначальному направлению
     значение в долларах (цена на 1 акцию)
      */
-    public double getAveregeOpenPrice();
+    public double getAverageOpenPrice();
     /*
     возвращает среднюю цену общего кол. акций купленых или проданых по конечному направлению
     значение в долларах (цена на 1 акцию)
      */
-    public double getAveregeClosePrice();
+    public double getAverageClosePrice();
     /*
     возвращает налог брокера на сделку(двухсторонюю(купил+продал)) размером в 100 акций
     значение в долларах
