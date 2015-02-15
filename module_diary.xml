@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_diary" default="compile.module.diary">
+  <dirname property="module.diary.basedir" file="${ant.file.module_diary}"/>
+  
+  <property name="module.jdk.home.diary" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.diary" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.diary" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.diary" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+  
+  <property name="diary.output.dir" value="${module.diary.basedir}/../out/production/Diary"/>
+  <property name="diary.testoutput.dir" value="${module.diary.basedir}/../out/test/Diary"/>
+  
+  <path id="diary.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="diary.module.production.classpath">
+    <path refid="${module.jdk.classpath.diary}"/>
+    <path refid="library.javacsv.classpath"/>
+  </path>
+  
+  <path id="diary.runtime.production.module.classpath">
+    <pathelement location="${diary.output.dir}"/>
+    <path refid="library.javacsv.classpath"/>
+  </path>
+  
+  <path id="diary.module.classpath">
+    <path refid="${module.jdk.classpath.diary}"/>
+    <pathelement location="${diary.output.dir}"/>
+    <path refid="library.javacsv.classpath"/>
+  </path>
+  
+  <path id="diary.runtime.module.classpath">
+    <pathelement location="${diary.testoutput.dir}"/>
+    <pathelement location="${diary.output.dir}"/>
+    <path refid="library.javacsv.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.diary">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.diary">
+    <patternset refid="excluded.from.module.diary"/>
+  </patternset>
+  
+  <path id="diary.module.sourcepath">
+    <dirset dir="${module.diary.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.diary" depends="compile.module.diary.production,compile.module.diary.tests" description="Compile module Diary"/>
+  
+  <target name="compile.module.diary.production" depends="register.custom.compilers" description="Compile module Diary; production classes">
+    <mkdir dir="${diary.output.dir}"/>
+    <javac2 destdir="${diary.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.diary}/javac">
+      <compilerarg line="${compiler.args.diary}"/>
+      <bootclasspath refid="diary.module.bootclasspath"/>
+      <classpath refid="diary.module.production.classpath"/>
+      <src refid="diary.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.diary"/>
+    </javac2>
+    
+    <copy todir="${diary.output.dir}">
+      <fileset dir="${module.diary.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.diary.tests" depends="register.custom.compilers,compile.module.diary.production" description="compile module Diary; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.diary" description="cleanup module">
+    <delete dir="${diary.output.dir}"/>
+    <delete dir="${diary.testoutput.dir}"/>
+  </target>
+</project>
