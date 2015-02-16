@@ -14,12 +14,61 @@ public class Trade {
     long volume;
     String route;
     String commentary;
+    int id;
     String account;
     MS ms;
     String cloid;
     double ecnTax;
 
-    public boolean addElement(String name, String value){
+    public int getId() {
+        return id;
+    }
+
+    public Time getTime() {
+        return time;
+    }
+
+    public String getTicker() {
+        return ticker;
+    }
+
+    public TradeType getTradeType() {
+        return tradeType;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public long getVolume() {
+        return volume;
+    }
+
+    public String getRoute() {
+        return route;
+    }
+
+    public String getCommentary() {
+        return commentary;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public MS getMs() {
+        return ms;
+    }
+
+    public String getCloid() {
+        return cloid;
+    }
+
+    public double getEcnTax() {
+        return ecnTax;
+    }
+
+    public Trade addElement(String name, String value){
         switch (name){
             case "time":
                 this.time = new Time(Integer.parseInt(value.substring(0,2)),Integer.parseInt(value.substring(3,5)),
@@ -52,8 +101,10 @@ public class Trade {
                 if(value.equalsIgnoreCase("margin")) this.ms=MS.Margin;
                 if(value.equalsIgnoreCase("short")) this.ms=MS.Short;
                 break;
-            default: return false;
+            case "id":
+                this.id = Integer.getInteger(value);
+            default: return null;
         }
-        return true;
+        return this;
     }
 }

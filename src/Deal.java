@@ -13,15 +13,16 @@ import java.util.TreeMap;
  * (по завершению кол-во товара переходит в 0 или продляеться на средний срок)
  */
 public class Deal implements DealType {
-    ArrayList<Trade> map;
-    Time time; //data
-    String ticker;
-    TradeType tradeType; //B S SS
-    Time openTime; //время открытия
-    Time closeTime; //время закрытия
-    MS direction; //направление сделки
+    ArrayList<Trade> map; //++
+    Time time; //data   //++
+    String ticker;      //++
+    TradeType tradeType; //B S SS ++
+    Time openTime; //время открытия ++
+    Time closeTime; //время закрытия ++
+    MS direction; //направление сделки ++
 
-    long volume; // кол акций
+    boolean notClosed; // не закрытая сделка --
+    long volume; // кол акций ++
     double averageOpenPrice; //сред. цена открытия
     double averageClosePrice; // сред. цена закрытия
     double ecnTax100; //комисия на 100 акций
@@ -34,7 +35,41 @@ public class Deal implements DealType {
     double volOnStartNet;
     double volOnCloseGross;
     double volOnCloseNet;
+    Trade firstTrade; // first trade of deal ++
+    Trade lastTrade; // last trade of deal ++
+    public Deal(Trade trade,Time date){
 
+    }
+
+    public Deal(Trade[] trades,Time date){
+        for(Trade tr: trades){ //added our trade to collection
+            map.add(tr);
+        }
+        if(!map.isEmpty()){ // looking for null collection
+            ticker = map.get(0).getTicker(); // getting ticker
+            this.time = date;
+            int minId=Short.MAX_VALUE;
+            int maxId=0;
+            for(Trade tr:map){ //getting lastTrade
+                if(tr.getId()>maxId) maxId = tr.getId();
+                if(tr.getId()<minId) minId = tr.getId();
+            }
+            int counterlong=0,countershort=0;
+            for(Trade tr:map) {              //getting firstTrade
+                if (minId == tr.getId()) firstTrade = tr;
+                if (maxId == tr.getId()) lastTrade = tr;
+                if (tr.getTradeType()==TradeType.B&&counterlong<tr.getVolume()) counterlong+=tr.getVolume();
+                if ((tr.getTradeType()==TradeType.S||tr.getTradeType()==TradeType.SS)&&
+                        countershort<tr.getVolume()) countershort+=tr.getVolume();
+            }
+            tradeType = firstTrade.getTradeType();
+            openTime = firstTrade.getTime();
+            closeTime = lastTrade.getTime();
+            direction = firstTrade.getMs();
+            if(counterlong==countershort) {volume=counterlong; notClosed=false; }
+            else notClosed=true;
+        }else System.out.println("can't get any trade");
+    }
     public Trade[] getTrades(){
         Trade[] tr = new Trade[map.size()];
         return map.toArray(tr);
@@ -133,5 +168,13 @@ public class Deal implements DealType {
     @Override
     public double getVolOnCloseNet() {
         return volOnCloseNet;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
+    }
+
+    public boolean isNotClosed() {
+        return notClosed;
     }
 }
