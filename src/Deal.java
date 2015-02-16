@@ -21,9 +21,9 @@ public class Deal implements DealType {
     Time closeTime; //время закрытия ++
     MS direction; //направление сделки ++
 
-    boolean notClosed; // не закрытая сделка --
+    boolean notClosed; // не закрытая сделка ++
     long volume; // кол акций ++
-    double averageOpenPrice; //сред. цена открытия
+    double averageOpenPrice; //сред. цена открытия // LAST HERE
     double averageClosePrice; // сред. цена закрытия
     double ecnTax100; //комисия на 100 акций
     double ecnTax; //общий налог брокера
@@ -68,6 +68,7 @@ public class Deal implements DealType {
             direction = firstTrade.getMs();
             if(counterlong==countershort) {volume=counterlong; notClosed=false; }
             else notClosed=true;
+
         }else System.out.println("can't get any trade");
     }
     public Trade[] getTrades(){
