@@ -9,7 +9,7 @@ import com.csvreader.CsvReader;
 
 public abstract class Reader {
 
-    public static Trade[] read(String[] args) {
+    public static Trade[] read() {
         ArrayList<Trade> list = new ArrayList<>();
         try {
             String adress = "C:/Users/med_high/Documents/23.csv";
@@ -33,27 +33,25 @@ public abstract class Reader {
                 String cloid = csvReader.get(csvReader.getHeader(i++));
                 String ecnTax = csvReader.get(csvReader.getHeader(i++));
                 list.add(new Trade()
-                        .addElement("time",time)
-                        .addElement("ticker",ticker)
-                        .addElement("tradeType",tradeType)
-                        .addElement("price",price)
-                        .addElement("volume",volume)
-                        .addElement("route",route)
-                        .addElement("commentary",commentary)
-                        .addElement("account",account)
-                        .addElement("ms",ms)
-                        .addElement("cloid",cloid)
-                        .addElement("ecnTax",ecnTax)
-                        .addElement("id",Integer.toString(id)));
+                                .addElement("time", time)
+                                .addElement("ticker", ticker)
+                                .addElement("tradetype", tradeType)
+                                .addElement("price", price)
+                                .addElement("volume", volume)
+                                .addElement("route", route)
+                                .addElement("commentary", commentary)
+                                .addElement("account", account)
+                                .addElement("ms", ms)
+                                .addElement("cloid", cloid)
+                                .addElement("ecntax", ecnTax)
+                                .addElement("id",Integer.toString(id))
+                );
 
                 System.out.println(time + " " + ticker+ " "+tradeType+ " "+price+ " "+volume+ " "+route+ " "+commentary+
                     account+ " "+ms+ " "+cloid+ " "+ecnTax);
-                System.out.println("ID="+id);
                 id--;
             }
-
             csvReader.close();
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

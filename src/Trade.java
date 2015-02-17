@@ -11,7 +11,7 @@ public class Trade {
     String ticker;
     TradeType tradeType;
     double price;
-    long volume;
+    int volume;
     String route;
     String commentary;
     int id;
@@ -40,7 +40,7 @@ public class Trade {
         return price;
     }
 
-    public long getVolume() {
+    public int getVolume() {
         return volume;
     }
 
@@ -72,21 +72,21 @@ public class Trade {
         switch (name){
             case "time":
                 this.time = new Time(Integer.parseInt(value.substring(0,2)),Integer.parseInt(value.substring(3,5)),
-                        Integer.parseInt(value.substring(4,6)));
+                        Integer.parseInt(value.substring(6,8)));
                 break;
             case "ticker":
                 this.ticker = value;
                 break;
             case "tradetype":
-                if(value.equalsIgnoreCase("b")) this.tradeType=TradeType.B;
-                if(value.equalsIgnoreCase("s")) this.tradeType=TradeType.S;
-                if(value.equalsIgnoreCase("ss")) this.tradeType=TradeType.SS;
+                if(value.equalsIgnoreCase("B")) this.tradeType=TradeType.B;
+                if(value.equalsIgnoreCase("S")) this.tradeType=TradeType.S;
+                if(value.equalsIgnoreCase("SS")) this.tradeType=TradeType.SS;
                 break;
             case "price":
                 this.price=Double.parseDouble(value);
                 break;
             case "volume":
-                this.volume=Long.parseLong(value);
+                this.volume=Integer.parseInt(value);
                 break;
             case "route":
                 this.route=value;
@@ -102,7 +102,14 @@ public class Trade {
                 if(value.equalsIgnoreCase("short")) this.ms=MS.Short;
                 break;
             case "id":
-                this.id = Integer.getInteger(value);
+                this.id = Integer.parseInt(value);
+                break;
+            case "cloid":
+                this.cloid=value;
+                break;
+            case "ecntax":
+                this.ecnTax=Double.parseDouble(value);
+                break;
             default: return null;
         }
         return this;

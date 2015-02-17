@@ -3,11 +3,15 @@
  */
 import java.sql.Time;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Test {
     public static void main(String args[]){
-        Time time = new Time(Date.UTC(2015,02,16,17,40,0));
-        Time time2 = new Time(Date.UTC(2015,02,17,17,40,0));
-        time.getTime();
+        String value = "12.34.56";
+        Time tm=new Time(Integer.parseInt(value.substring(0,2)),Integer.parseInt(value.substring(3,5)),
+                Integer.parseInt(value.substring(6,8)));
+        System.out.print(tm);
+        Reader.read();
     }
 }

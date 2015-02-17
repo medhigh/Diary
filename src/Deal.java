@@ -2,9 +2,9 @@ import Enums.MS;
 import Enums.TradeType;
 
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.TreeMap;
+import java.util.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Created by med_high on 14.02.2015.
@@ -14,7 +14,7 @@ import java.util.TreeMap;
  */
 public class Deal implements DealType {
     ArrayList<Trade> map; //++
-    Time time; //data   //++
+    Time time; //date   //++
     String ticker;      //++
     TradeType tradeType; //B S SS ++
     Time openTime; //время открытия ++
@@ -22,15 +22,17 @@ public class Deal implements DealType {
     MS direction; //направление сделки ++
 
     boolean notClosed; // не закрытая сделка ++
-    long volume; // кол акций ++
-    double averageOpenPrice; //сред. цена открытия // LAST HERE
-    double averageClosePrice; // сред. цена закрытия
-    double ecnTax100; //комисия на 100 акций
-    double ecnTax; //общий налог брокера
-    double moneyVolumeOpen; //сумма открытия
-    double moneyVolumeClose; //сумма закрытия
-    double PlGross; //прибыль без налога
-    double PlNet; //чистая прибыль (с налогом)
+    int volume; // кол акций ++
+    double averageOpenPrice; //сред. цена открытия // ++
+    double averageClosePrice; // сред. цена закрытия //++
+    double dealedAveregePriceVolume; //difference of averageOpen/ClosePrice*volume ++
+    double differenceOfAveregePrice; //difference of averageOpen/ClosePrice ++
+    double ecnTax100; //комисия на 100 акций //--
+    double ecnTax; //общий налог брокера // ++
+    double moneyVolumeOpen; //сумма открытия //++
+    double moneyVolumeClose; //сумма закрытия //++
+    double PlGross; //прибыль без налога ++
+    double PlNet; //чистая прибыль (с налогом) ++
     double volOnStartGross;
     double volOnStartNet;
     double volOnCloseGross;
@@ -41,7 +43,7 @@ public class Deal implements DealType {
 
     }
 
-    public Deal(Trade[] trades,Time date){
+    public Deal(Trade[] trades,Time date){ //!!! need to set date ecnTax100 and 4 fields;
         for(Trade tr: trades){ //added our trade to collection
             map.add(tr);
         }
@@ -54,22 +56,81 @@ public class Deal implements DealType {
                 if(tr.getId()>maxId) maxId = tr.getId();
                 if(tr.getId()<minId) minId = tr.getId();
             }
+            HashMap<Double,Integer> priceB=new HashMap<>();
+            HashMap<Double,Integer> priceS=new HashMap<>();
             int counterlong=0,countershort=0;
+            ecnTax=0;
+            double moneyVolumeB=0,moneyVolumeS=0;
             for(Trade tr:map) {              //getting firstTrade
                 if (minId == tr.getId()) firstTrade = tr;
                 if (maxId == tr.getId()) lastTrade = tr;
-                if (tr.getTradeType()==TradeType.B&&counterlong<tr.getVolume()) counterlong+=tr.getVolume();
+                if (tr.getTradeType()==TradeType.B&&counterlong<tr.getVolume()) {
+                    counterlong+=tr.getVolume();
+                }
                 if ((tr.getTradeType()==TradeType.S||tr.getTradeType()==TradeType.SS)&&
-                        countershort<tr.getVolume()) countershort+=tr.getVolume();
+                        countershort<tr.getVolume()) {
+                    countershort+=tr.getVolume();
+                }
+                if (tr.getTradeType()==TradeType.B){
+                    priceB.put(tr.getPrice(),tr.getVolume());
+                    moneyVolumeB+=tr.getVolume()*tr.getPrice();
+                }
+                if ((tr.getTradeType()==TradeType.S||tr.getTradeType()==TradeType.SS)){
+                    priceS.put(tr.getPrice(),tr.getVolume());
+                    moneyVolumeS+=tr.getVolume()*tr.getPrice();
+                }
+                ecnTax+=tr.getEcnTax();
             }
             tradeType = firstTrade.getTradeType();
             openTime = firstTrade.getTime();
             closeTime = lastTrade.getTime();
             direction = firstTrade.getMs();
-            if(counterlong==countershort) {volume=counterlong; notClosed=false; }
-            else notClosed=true;
-
+            if(counterlong==countershort) {
+                volume=counterlong; notClosed=false; }
+            else {
+                notClosed=true; volume=counterlong<countershort?countershort:counterlong;
+            }
+            if(firstTrade.getTradeType()==TradeType.B){
+                averageOpenPrice=calcAveragePrice(priceB);
+                averageClosePrice=calcAveragePrice(priceS);
+                moneyVolumeOpen=moneyVolumeB;
+                moneyVolumeClose=moneyVolumeS;
+                dealedAveregePriceVolume =getTruncate((averageClosePrice-averageOpenPrice)*volume,2);
+                differenceOfAveregePrice=averageClosePrice-averageOpenPrice;
+                PlGross = moneyVolumeClose-moneyVolumeOpen;}
+            if(firstTrade.getTradeType()==TradeType.SS){
+                averageOpenPrice=calcAveragePrice(priceS);
+                averageClosePrice=calcAveragePrice(priceB);
+                moneyVolumeOpen=moneyVolumeS;
+                moneyVolumeClose=moneyVolumeB;
+                dealedAveregePriceVolume =getTruncate((averageOpenPrice-averageClosePrice)*volume,2);
+                differenceOfAveregePrice=averageOpenPrice-averageClosePrice;
+                PlGross = moneyVolumeOpen-moneyVolumeClose;}
+            if(firstTrade.getTradeType()==TradeType.S) {
+                System.out.println("Something goes wrong on Trade Type S " +
+                        "in firsTrade!!!or first trade was in not closed deal!");
+                System.out.println("FIRST TRADE WAS: ");
+                System.out.println(firstTrade.time + " " + firstTrade.ticker+ " "+firstTrade.tradeType+
+                        " "+firstTrade.price+ " "+volume+ " "+firstTrade.route+ " "+firstTrade.commentary+
+                        firstTrade.account+ " "+firstTrade.ms+ " "+firstTrade.cloid+ " "+ecnTax+" "+firstTrade.id);
+                //moneyVolumeOpen = moneyVolumeB;
+                //moneyVolumeClose = moneyVolumeS;
+            }
+            PlNet=PlGross-ecnTax;
         }else System.out.println("can't get any trade");
+    }
+
+    public static double calcAveragePrice(HashMap<Double,Integer> map){
+        double sumall=0,sumval=0;
+        for(Map.Entry<Double,Integer> entry:map.entrySet()){
+            sumall+=entry.getKey()*entry.getValue();
+            sumval+=entry.getValue();
+        }
+        return  sumall/sumval;
+    }
+    public static double getTruncate(double value,int amOfSymbols){
+        double newDouble = new BigDecimal(value).setScale(amOfSymbols, RoundingMode.UP).doubleValue();
+        return  newDouble;
     }
     public Trade[] getTrades(){
         Trade[] tr = new Trade[map.size()];
@@ -109,7 +170,7 @@ public class Deal implements DealType {
     }
 
     @Override
-    public long getVolume() {
+    public int getVolume() {
         return volume;
     }
 
