@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import Enums.MS;
 import Enums.TradeType;
@@ -66,11 +67,18 @@ public class Reader {
     public static HashMap<String,ArrayList<Trade>> sortByDeals(Trade[] trades){
         HashMap<String,ArrayList<Trade>> map = new HashMap<>();
         int counter=0;
-        ArrayList<>
-        String ticker="123123123";
-        for(int i=0;i<trades.length;i++){
-
+        HashSet<String> tickerSet = new HashSet<>();
+        for(Trade trade:trades){
+            tickerSet.add(trade.getTicker());
         }
+        for(String str:tickerSet){
+            ArrayList<Trade> sameTickerTrades = new ArrayList<>();
+            for(Trade trade:trades){
+                if(str.equalsIgnoreCase(trade.getTicker())) sameTickerTrades.add(trade);
+            }
+            map.put(str,sameTickerTrades);
+        }
+        return map;
     }
 
 }

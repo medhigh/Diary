@@ -1,5 +1,5 @@
 /**
- * Created by med_high on 26.02.2015. 
+ * Created by med_high on 26.02.2015.
  */
 public abstract class Functions {
     /*volume of actions got traded*/
