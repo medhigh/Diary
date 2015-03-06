@@ -2,12 +2,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import Enums.MS;
 import Enums.TradeType;
 import com.csvreader.CsvReader;
 
-public abstract class Reader {
+public class Reader {
 
     public static Trade[] read() {
         ArrayList<Trade> list = new ArrayList<>();
@@ -62,6 +63,14 @@ public abstract class Reader {
         return arr;
     }
 
-    public abstract ArrayList<Deal> sortByDeals(Trade[] trades);
+    public static HashMap<String,ArrayList<Trade>> sortByDeals(Trade[] trades){
+        HashMap<String,ArrayList<Trade>> map = new HashMap<>();
+        int counter=0;
+        ArrayList<>
+        String ticker="123123123";
+        for(int i=0;i<trades.length;i++){
+
+        }
+    }
 
 }
