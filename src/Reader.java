@@ -4,17 +4,19 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import Enums.MS;
 import Enums.TradeType;
 import com.csvreader.CsvReader;
 
 public class Reader {
+    public static final String CSV="C:/Users/med_high/Documents/23.csv";
 
-    public static Trade[] read() {
+    public static Trade[] read(String adress) {
         ArrayList<Trade> list = new ArrayList<>();
         try {
-            String adress = "C:/Users/med_high/Documents/23.csv";
+            //String adress = "C:/Users/med_high/Documents/23.csv";
             CsvReader csvReader = new CsvReader(adress);
 
             csvReader.readHeaders();
@@ -49,9 +51,9 @@ public class Reader {
                                 .addElement("id",Integer.toString(id))
                 );
 
-                System.out.println(time + " " + ticker+ " "+tradeType+ " "+price+ " "+volume+ " "+route+ " "+commentary+
+                /*System.out.println(time + " " + ticker+ " "+tradeType+ " "+price+ " "+volume+ " "+route+ " "+commentary+
                     account+ " "+ms+ " "+cloid+ " "+ecnTax);
-                id--;
+                */id--;
             }
             csvReader.close();
         } catch (FileNotFoundException e) {
@@ -81,4 +83,23 @@ public class Reader {
         return map;
     }
 
+    public static Deal[] getArrayOfDeals(HashMap<String,ArrayList<Trade>> map){
+        ArrayList<Deal> deals=new ArrayList<>();
+        for(Map.Entry<String,ArrayList<Trade>> entry:map.entrySet()){
+            if(entry.getValue()!=null) {
+                ArrayList<Trade> trades = map.get(entry.getKey());
+                Trade[] trr = new Trade[trades.size()];
+                trades.toArray(trr);
+                if (trr != null) {
+                    deals.add(new Deal(trr, trades.get(0).getTime()));
+                }
+            }
+        }
+        Deal[] dd=new Deal[deals.size()];
+        return deals.toArray(dd);
+    }
+
+    public static Deal[] readAndParse(String address){
+        return getArrayOfDeals(sortByDeals(read(address)));
+    }
 }

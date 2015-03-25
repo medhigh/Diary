@@ -44,13 +44,16 @@ public class Deal implements DealType {
     }
 
     public Deal(Trade[] trades,Time date){ //!!! need to set date ecnTax100 and 4 fields;
+        map = new ArrayList<>();
         for(Trade tr: trades){ //added our trade to collection
-            map.add(tr);
+            if (tr != null) {
+                map.add(tr);
+            }
         }
         if(!map.isEmpty()){ // looking for null collection
             ticker = map.get(0).getTicker(); // getting ticker
             this.time = date;
-            int minId=Short.MAX_VALUE;
+            int minId=Integer.MAX_VALUE;
             int maxId=0;
             for(Trade tr:map){ //getting lastTrade
                 if(tr.getId()>maxId) maxId = tr.getId();
