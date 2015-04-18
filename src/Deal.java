@@ -82,7 +82,9 @@ public class Deal implements DealType {
                     priceS.put(tr.getPrice(),tr.getVolume());
                     moneyVolumeS+=tr.getVolume()*tr.getPrice();
                 }
-                ecnTax+=tr.getEcnTax();
+                if (tr.getEcnTax() != null) {
+                    ecnTax+=tr.getEcnTax();
+                }
             }
             tradeType = firstTrade.getTradeType();
             openTime = firstTrade.getTime();

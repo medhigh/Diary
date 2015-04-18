@@ -12,6 +12,7 @@ import com.csvreader.CsvReader;
 
 public class Reader {
     public static final String CSV="C:/Users/med_high/Documents/23.csv";
+    public static final String TEST_CSV="C:/Users/med_high/Documents/03.02.15.csv";
 
     public static Trade[] read(String adress) {
         ArrayList<Trade> list = new ArrayList<>();
@@ -21,7 +22,8 @@ public class Reader {
 
             csvReader.readHeaders();
             int id=Short.MAX_VALUE;
-
+            boolean readEcnTax = true;
+            if(csvReader.getHeaderCount()<12) readEcnTax=false;
             while (csvReader.readRecord())
             {
                 int i=0;
@@ -35,8 +37,9 @@ public class Reader {
                 String account = csvReader.get(csvReader.getHeader(i++));
                 String ms = csvReader.get(csvReader.getHeader(i++));
                 String cloid = csvReader.get(csvReader.getHeader(i++));
-                String ecnTax = csvReader.get(csvReader.getHeader(i++));
-                list.add(new Trade()
+                if(readEcnTax){
+                    String ecnTax = csvReader.get(csvReader.getHeader(i++));
+                    list.add(new Trade()
                                 .addElement("time", time)
                                 .addElement("ticker", ticker)
                                 .addElement("tradetype", tradeType)
@@ -48,8 +51,23 @@ public class Reader {
                                 .addElement("ms", ms)
                                 .addElement("cloid", cloid)
                                 .addElement("ecntax", ecnTax)
-                                .addElement("id",Integer.toString(id))
-                );
+                                .addElement("id", Integer.toString(id))
+                    );
+                }else{
+                    list.add(new Trade()
+                                    .addElement("time", time)
+                                    .addElement("ticker", ticker)
+                                    .addElement("tradetype", tradeType)
+                                    .addElement("price", price)
+                                    .addElement("volume", volume)
+                                    .addElement("route", route)
+                                    .addElement("commentary", commentary)
+                                    .addElement("account", account)
+                                    .addElement("ms", ms)
+                                    .addElement("cloid", cloid)
+                                    .addElement("id", Integer.toString(id))
+                    );
+                }
 
                 /*System.out.println(time + " " + ticker+ " "+tradeType+ " "+price+ " "+volume+ " "+route+ " "+commentary+
                     account+ " "+ms+ " "+cloid+ " "+ecnTax);

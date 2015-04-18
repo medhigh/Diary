@@ -18,7 +18,7 @@ public class Trade {
     String account;
     MS ms;
     String cloid;
-    double ecnTax;
+    Double ecnTax;
 
     public int getId() {
         return id;
@@ -64,7 +64,7 @@ public class Trade {
         return cloid;
     }
 
-    public double getEcnTax() {
+    public Double getEcnTax() {
         return ecnTax;
     }
 
