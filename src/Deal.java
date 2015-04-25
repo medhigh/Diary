@@ -26,6 +26,8 @@ public class Deal implements DealType {
     double averageOpenPrice; //сред. цена открытия // ++
     double averageClosePrice; // сред. цена закрытия //++
     double dealedAveregePriceVolume; //difference of averageOpen/ClosePrice*volume ++
+
+
     double differenceOfAveregePrice; //difference of averageOpen/ClosePrice ++
     double ecnTax100; //комисия на 100 акций //--
     double ecnTax; //общий налог брокера // ++
@@ -75,12 +77,14 @@ public class Deal implements DealType {
                     countershort+=tr.getVolume();
                 }
                 if (tr.getTradeType()==TradeType.B){
-                    priceB.put(tr.getPrice(),tr.getVolume());
-                    moneyVolumeB+=tr.getVolume()*tr.getPrice();
+                    priceB.put(tr.getPrice(), tr.getVolume());
+                    moneyVolumeB+=getTruncate(tr.volume * tr.price, 2);
+                    //System.out.println(tr.volume+" volume "+tr.price+" price"+moneyVolumeB+" moneyVolB"+"    **"+(tr.volume*tr.price));
                 }
                 if ((tr.getTradeType()==TradeType.S||tr.getTradeType()==TradeType.SS)){
-                    priceS.put(tr.getPrice(),tr.getVolume());
-                    moneyVolumeS+=tr.getVolume()*tr.getPrice();
+                    priceS.put(tr.getPrice(), tr.getVolume());
+                    moneyVolumeS+=getTruncate(tr.volume*tr.price,2);
+                    //System.out.println(tr.volume + " volume " + tr.price + " price"+moneyVolumeS+" moneyVolS"+"    **"+(tr.volume*tr.price));
                 }
                 if (tr.getEcnTax() != null) {
                     ecnTax+=tr.getEcnTax();
@@ -101,7 +105,7 @@ public class Deal implements DealType {
                 moneyVolumeOpen=moneyVolumeB;
                 moneyVolumeClose=moneyVolumeS;
                 dealedAveregePriceVolume =getTruncate((averageClosePrice-averageOpenPrice)*volume,2);
-                differenceOfAveregePrice=averageClosePrice-averageOpenPrice;
+                differenceOfAveregePrice=getTruncate(averageClosePrice-averageOpenPrice,2);
                 PlGross = moneyVolumeClose-moneyVolumeOpen;}
             if(firstTrade.getTradeType()==TradeType.SS){
                 averageOpenPrice=calcAveragePrice(priceS);
@@ -109,7 +113,7 @@ public class Deal implements DealType {
                 moneyVolumeOpen=moneyVolumeS;
                 moneyVolumeClose=moneyVolumeB;
                 dealedAveregePriceVolume =getTruncate((averageOpenPrice-averageClosePrice)*volume,2);
-                differenceOfAveregePrice=averageOpenPrice-averageClosePrice;
+                differenceOfAveregePrice=getTruncate(averageOpenPrice-averageClosePrice,2);
                 PlGross = moneyVolumeOpen-moneyVolumeClose;}
             if(firstTrade.getTradeType()==TradeType.S) {
                 System.out.println("Something goes wrong on Trade Type S " +
@@ -133,9 +137,8 @@ public class Deal implements DealType {
         }
         return  sumall/sumval;
     }
-    public static double getTruncate(double value,int amOfSymbols){
-        double newDouble = new BigDecimal(value).setScale(amOfSymbols, RoundingMode.UP).doubleValue();
-        return  newDouble;
+    public static double getTruncate(double value,int scale){
+        return Math.round(value * Math.pow(10, scale)) / Math.pow(10, scale);
     }
     public Trade[] getTrades(){
         Trade[] tr = new Trade[map.size()];
@@ -202,6 +205,21 @@ public class Deal implements DealType {
         return moneyVolumeOpen;
     }
 
+    public double getDealedAveregePriceVolume() {
+        return dealedAveregePriceVolume;
+    }
+
+    public double getDifferenceOfAveregePrice() {
+        return differenceOfAveregePrice;
+    }
+
+    public Trade getFirstTrade() {
+        return firstTrade;
+    }
+
+    public Trade getLastTrade() {
+        return lastTrade;
+    }
     @Override
     public double getMoneyVolumeClose() {
         return moneyVolumeClose;

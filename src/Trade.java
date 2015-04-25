@@ -10,8 +10,8 @@ public class Trade {
     Time time;
     String ticker;
     TradeType tradeType;
-    double price;
-    int volume;
+    Double price;
+    Integer volume;
     String route;
     String commentary;
     int id;
@@ -36,11 +36,11 @@ public class Trade {
         return tradeType;
     }
 
-    public double getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public int getVolume() {
+    public Integer getVolume() {
         return volume;
     }
 

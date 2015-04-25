@@ -22,8 +22,10 @@ public class Reader {
 
             csvReader.readHeaders();
             int id=Short.MAX_VALUE;
-            boolean readEcnTax = true;
-            if(csvReader.getHeaderCount()<12) readEcnTax=false;
+            boolean readEcnTax = false;
+            boolean tenFields = false;
+            if(csvReader.getHeaderCount()==12) readEcnTax=true;
+            if(csvReader.getHeaderCount()==10) tenFields=true;
             while (csvReader.readRecord())
             {
                 int i=0;
@@ -37,6 +39,20 @@ public class Reader {
                 String account = csvReader.get(csvReader.getHeader(i++));
                 String ms = csvReader.get(csvReader.getHeader(i++));
                 String cloid = csvReader.get(csvReader.getHeader(i++));
+                if(tenFields){
+                    list.add(new Trade()
+                            .addElement("time", time)
+                            .addElement("ticker", ticker)
+                            .addElement("tradetype", tradeType)
+                            .addElement("price", price)
+                            .addElement("volume", volume)
+                            .addElement("route", route)
+                            .addElement("commentary", commentary)
+                            .addElement("account", account)
+                            .addElement("ms", ms)
+                            .addElement("cloid", cloid)
+                    );
+                }
                 if(readEcnTax){
                     String ecnTax = csvReader.get(csvReader.getHeader(i++));
                     list.add(new Trade()

@@ -96,9 +96,9 @@ public class Func extends Functions {
     public double getDollarsTraded(Deal[] deals) {
         double traded=0;
         for(Deal dd:deals){
-            traded+=Math.abs(dd.getAverageClosePrice()-dd.getAverageOpenPrice());
+            traded+=Math.abs(dd.getDifferenceOfAveregePrice());
         }
-        return traded;
+        return Deal.getTruncate(traded,2);
     }
 
     @Override
